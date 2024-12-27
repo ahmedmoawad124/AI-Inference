@@ -87,7 +87,7 @@ The benchmark results were conducted on the following setup:
 | ONNX                 | GPU     | FP32      | 96.31        | 273.726  | 377.00            | 7.99                 |
 | ONNX-TensorRT        | GPU     | FP32      | 96.31        | 581.654  | 297.00            | 3.80                 |
 
-###### Important Note on ONNX Runtime vs. PyTorch:
+##### Important Note on ONNX Runtime vs. PyTorch:
 
 When comparing the inference speed of ONNX Runtime with PyTorch, it's crucial to account for data transfer overhead.
 
