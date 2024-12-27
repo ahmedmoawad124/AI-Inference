@@ -1,0 +1,32 @@
+name: ai_inference_env  
+channels:
+  - defaults
+  - pytorch
+  - nvidia  
+dependencies:
+  - python=3.11
+  - pytorch==2.5.1
+  - torchvision==0.15.2
+  - torchaudio==2.5.1
+  - pytorch-cuda=11.8
+  - opencv==4.10.0
+  - numpy==1.26.4
+  - tqdm==4.66.5
+  - kagglehub==0.2.7
+  - matplotlib==3.9.2
+  - pip
+  - pip:
+      - torchsummary==1.5.1
+      - torchinfo==1.8.0
+      - imutils==0.5.4
+      - scikit-learn==1.6.0
+      - onnx==1.15.0
+      - onnxruntime-gpu==1.17.1
+      - onnxoptimizer==0.3.13
+      - onnxscript==0.1.0.dev20240315
+      - tensorrt==8.6.1
+      - torch-tensorrt==1.4.0
+      - openvino==2024.6.0
+      - GPUtil==1.4.0
+      - psutil==6.1.1
+      - gdown==5.2.0
