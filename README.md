@@ -59,6 +59,7 @@ The benchmark results were conducted on the following setup:
 
 - **GPU**: NVIDIA Quadro T2000 (4 GB)
 - **CUDA Version**: 11.8
+
 ### VanillaCNN
 | Framework / Compiler | Device  | Precision | Accuracy (%) | FPS      | GPU Memory (MiB)  | GPU Utilization (%)  |
 |----------------------|---------|-----------|--------------|----------|-------------------|----------------------|
@@ -85,3 +86,11 @@ The benchmark results were conducted on the following setup:
 | Torch-TensorRT       | GPU     | FP32      | 96.31        | 506.939  | 93.00             | 3.85                 |
 | ONNX                 | GPU     | FP32      | 96.31        | 273.726  | 377.00            | 7.99                 |
 | ONNX-TensorRT        | GPU     | FP32      | 96.31        | 581.654  | 297.00            | 3.80                 |
+
+###### Important Note on ONNX Runtime vs. PyTorch:
+
+When comparing the inference speed of ONNX Runtime with PyTorch, it's crucial to account for data transfer overhead.
+
+PyTorch FPS calculations typically exclude the time taken to copy input data from CPU to GPU and output data back to CPU.
+ONNX Runtime, on the other hand, inherently includes these data transfer times.
+Therefore, a direct FPS comparison between PyTorch and ONNX Runtime can be misleading. To ensure a fair comparison, it's essential to include the data transfer times in the PyTorch FPS calculations.
