@@ -25,20 +25,63 @@ To activate it:
 ## Dataset Downloading
 ```python3 ./datasets/download_dataset.py```
 
-## Models Training
-#### VanillaCNN: ```python3 train.py --backbone="vanilla_cnn" --saved_model_dir="./weights/vanilla_cnn/"```
-#### ResNet18: ```python3 train.py --backbone="resnet18" --saved_model_dir="./weights/resnet18/"```
-#### MobileNetV2: ```python3 train.py --backbone="mobilenet_v2" --saved_model_dir="./weights/mobilenet_v2/"```
+## Run Train script
+#### VanillaCNN: 
+```python3 train.py --backbone="vanilla_cnn" --saved_model_dir="./weights/vanilla_cnn/"```
+#### ResNet18: 
+```python3 train.py --backbone="resnet18" --saved_model_dir="./weights/resnet18/"```
+#### MobileNetV2: 
+```python3 train.py --backbone="mobilenet_v2" --saved_model_dir="./weights/mobilenet_v2/"```
 
-## Weights Downloading
+## Run Weights Download script
 ```bash ./weights/download.sh```
 
-## Models Exporting
-#### Torch-Script: ```bash ./inference/torch_script/export.sh```
-#### Torch-Tensorrt: ```bash ./inference/torch_tensorrt/export.sh```
-#### ONNX: ```bash ./inference/onnx/export.sh```
+## Run Models Export scripts
+#### Torch-Script: 
+```bash ./inference/torch_script/export.sh```
+#### Torch-Tensorrt: 
+```bash ./inference/torch_tensorrt/export.sh```
+#### ONNX: 
+```bash ./inference/onnx/export.sh```
 
-## Models Benchmarking
-#### Torch-Script: ```python3 ./inference/torch_script/benchmark.py```
-#### Torch-Tensorrt: ```python3 ./inference/torch_tensorrt/benchmark.py```
-#### ONNX: ```python3 ./inference/onnx/benchmark.py```
+## Run Benchmark scripts
+#### PyTorch: 
+```python3 ./inference/pytorch/benchmark.py```
+#### Torch-Script: 
+```python3 ./inference/torch_script/benchmark.py```
+#### Torch-Tensorrt: 
+```python3 ./inference/torch_tensorrt/benchmark.py```
+#### ONNX: 
+```python3 ./inference/onnx/benchmark.py```
+
+## Benchmark Results
+The benchmark results were conducted on the following setup:
+
+- **GPU**: NVIDIA Quadro T2000 (4 GB)
+- **CUDA Version**: 11.8
+### VanillaCNN
+| Framework / Compiler | Device  | Precision | Accuracy (%) | FPS      | GPU Memory (MiB)  | GPU Utilization (%)  |
+|----------------------|---------|-----------|--------------|----------|-------------------|----------------------|
+| PyTorch              | GPU     | FP32      | 87.5         | 355.853  | 295.00            | 5.78                 |
+| TorchScript          | GPU     | FP32      | 87.5         | 358.822  | 237.00            | 5.74                 |
+| Torch-TensorRT       | GPU     | FP32      | 87.5         | 419.277  | 183.00            | 4.17                 |
+| ONNX                 | GPU     | FP32      | 87.5         | 449.473  | 357.00            | 4.62                 |
+| ONNX-TensorRT        | GPU     | FP32      | 87.5         | 478.035  | 389.00            | 4.79                 |
+
+### ResNet18
+| Framework / Compiler | Device  | Precision | Accuracy (%) | FPS      | GPU Memory (MiB)  | GPU Utilization (%)  |
+|----------------------|---------|-----------|--------------|----------|-------------------|----------------------|
+| PyTorch              | GPU     | FP32      | 95.67        | 183.542  | 309.00            | 9.52                 |
+| TorchScript          | GPU     | FP32      | 95.67        | 212.470  | 251.00            | 9.10                 |
+| Torch-TensorRT       | GPU     | FP32      | 95.67        | 357.560  | 145.00            | 5.78                 |
+| ONNX                 | GPU     | FP32      | 95.67        | 243.092  | 243.00            | 9.50                 |
+| ONNX-TensorRT        | GPU     | FP32      | 95.67        | 389.137  | 343.00            | 5.92                 |
+
+### MobileNetV2
+| Framework / Compiler | Device  | Precision | Accuracy (%) | FPS      | GPU Memory (MiB)  | GPU Utilization (%)  |
+|----------------------|---------|-----------|--------------|----------|-------------------|----------------------|
+| PyTorch              | GPU     | FP32      | 96.31        | 102.647  | 331.00            | 7.59                 |
+| TorchScript          | GPU     | FP32      | 96.31        | 120.876  | 273.00            | 6.74                 |
+| Torch-TensorRT       | GPU     | FP32      | 96.31        | 506.939  | 93.00             | 3.85                 |
+| ONNX                 | GPU     | FP32      | 96.31        | 273.726  | 377.00            | 7.99                 |
+| ONNX-TensorRT        | GPU     | FP32      | 96.31        | 581.654  | 297.00            | 3.80                 |
