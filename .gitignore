@@ -1,0 +1,10 @@
+*.pth
+*.onnx
+*.ts
+*.bin
+*.xml
+*.engine
+*.profile
+# Ignore __pycache__ folders
+__pycache__/
+*.py[cod]
