@@ -30,3 +30,4 @@ dependencies:
       - GPUtil==1.4.0
       - psutil==6.1.1
       - gdown==5.2.0
+      - pycuda==2024.1.2
