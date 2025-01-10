@@ -61,31 +61,331 @@ The benchmark results were conducted on the following setup:
 - **CUDA Version**: 11.8
 
 ### VanillaCNN
-| Framework / Compiler | Device  | Precision | Accuracy (%) | FPS      | GPU Memory (MiB)  | GPU Utilization (%)  |
-|----------------------|---------|-----------|--------------|----------|-------------------|----------------------|
-| PyTorch              | GPU     | FP32      | 87.5         | 355.853  | 295.00            | 5.78                 |
-| TorchScript          | GPU     | FP32      | 87.5         | 358.822  | 237.00            | 5.74                 |
-| Torch-TensorRT       | GPU     | FP32      | 87.5         | 419.277  | 183.00            | 4.17                 |
-| ONNX                 | GPU     | FP32      | 87.5         | 449.473  | 357.00            | 4.62                 |
-| ONNX-TensorRT        | GPU     | FP32      | 87.5         | 478.035  | 389.00            | 4.79                 |
+<table>
+  <tr>
+    <th>Framework / Compiler</th>
+    <th>Device</th>
+    <th>Precision</th>
+    <th>Accuracy (%)</th>
+    <th>FPS</th>
+    <th>GPU Memory (MiB)</th>
+    <th>GPU Utilization (%)</th>
+  </tr>
+  <tr>
+    <td rowspan="2">PyTorch</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>87.5</td>
+    <td>354.522</td>
+    <td>283.00</td>
+    <td>6.09</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>87.5</td>
+    <td>238.779</td>
+    <td>381.00</td>
+    <td>10.05</td>
+  </tr>
+  <tr>
+    <td rowspan="2">TorchScript</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>87.5</td>
+    <td>353.857</td>
+    <td>225.00</td>
+    <td>5.60</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>87.5</td>
+    <td>239.124</td>
+    <td>225.00</td>
+    <td>8.82</td>
+  </tr>
+  <tr>
+    <td rowspan="2">Torch-TensorRT</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>87.5</td>
+    <td>458.431</td>
+    <td>195.00</td>
+    <td>4.61</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>87.5</td>
+    <td>726.124</td>
+    <td>141.00</td>
+    <td>2.84</td>
+  </tr>
+  <tr>
+    <td rowspan="2">ONNX</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>87.5</td>
+    <td>468.416</td>
+    <td>357.00</td>
+    <td>5.42</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>87.5</td>
+    <td>535.090</td>
+    <td>231.00</td>
+    <td>4.41</td>
+  </tr>
+  <tr>
+    <td rowspan="2">ONNX-TensorRT</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>87.5</td>
+    <td>497.709</td>
+    <td>391.00</td>
+    <td>5.04</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>87.5</td>
+    <td>814.335</td>
+    <td>335.00</td>
+    <td>3.03</td>
+  </tr>
+  <tr>
+    <td rowspan="2">TensorRT</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>87.5</td>
+    <td>471.896</td>
+    <td>175.00</td>
+    <td>5.08</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>87.5</td>
+    <td>765.085</td>
+    <td>121.00</td>
+    <td>2.85</td>
+  </tr>
+</table>
 
 ### ResNet18
-| Framework / Compiler | Device  | Precision | Accuracy (%) | FPS      | GPU Memory (MiB)  | GPU Utilization (%)  |
-|----------------------|---------|-----------|--------------|----------|-------------------|----------------------|
-| PyTorch              | GPU     | FP32      | 95.67        | 183.542  | 309.00            | 9.52                 |
-| TorchScript          | GPU     | FP32      | 95.67        | 212.470  | 251.00            | 9.10                 |
-| Torch-TensorRT       | GPU     | FP32      | 95.67        | 357.560  | 145.00            | 5.78                 |
-| ONNX                 | GPU     | FP32      | 95.67        | 243.092  | 243.00            | 9.50                 |
-| ONNX-TensorRT        | GPU     | FP32      | 95.67        | 389.137  | 343.00            | 5.92                 |
+<table>
+  <tr>
+    <th>Framework / Compiler</th>
+    <th>Device</th>
+    <th>Precision</th>
+    <th>Accuracy (%)</th>
+    <th>FPS</th>
+    <th>GPU Memory (MiB)</th>
+    <th>GPU Utilization (%)</th>
+  </tr>
+  <tr>
+    <td rowspan="2">PyTorch</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>95.67</td>
+    <td>192.866</td>
+    <td>395.00</td>
+    <td>10.68</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>95.67</td>
+    <td>76.369</td>
+    <td>395.00</td>
+    <td>24.18</td>
+  </tr>
+  <tr>
+    <td rowspan="2">TorchScript</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>95.67</td>
+    <td>211.668</td>
+    <td>239.00</td>
+    <td>9.42</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>95.67</td>
+    <td>76.672</td>
+    <td>239.00</td>
+    <td>28.12</td>
+  </tr>
+  <tr>
+    <td rowspan="2">Torch-TensorRT</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>95.67</td>
+    <td>381.955</td>
+    <td>151.00</td>
+    <td>6.68</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>95.67</td>
+    <td>582.762</td>
+    <td>123.00</td>
+    <td>4.13</td>
+  </tr>
+  <tr>
+    <td rowspan="2">ONNX</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>95.67</td>
+    <td>227.414</td>
+    <td>243.00</td>
+    <td>9.98</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>95.67</td>
+    <td>184.349</td>
+    <td>171.00</td>
+    <td>11.54</td>
+  </tr>
+  <tr>
+    <td rowspan="2">ONNX-TensorRT</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>95.67</td>
+    <td>389.084</td>
+    <td>347.00</td>
+    <td>6.14</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>95.67</td>
+    <td>620.516</td>
+    <td>317.00</td>
+    <td>3.93</td>
+  </tr>
+  <tr>
+    <td rowspan="2">TensorRT</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>95.67</td>
+    <td>377.047</td>
+    <td>131.00</td>
+    <td>6.04</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>95.67</td>
+    <td>598.237</td>
+    <td>103.00</td>
+    <td>3.39</td>
+  </tr>
+</table>
 
 ### MobileNetV2
-| Framework / Compiler | Device  | Precision | Accuracy (%) | FPS      | GPU Memory (MiB)  | GPU Utilization (%)  |
-|----------------------|---------|-----------|--------------|----------|-------------------|----------------------|
-| PyTorch              | GPU     | FP32      | 96.31        | 102.647  | 331.00            | 7.59                 |
-| TorchScript          | GPU     | FP32      | 96.31        | 120.876  | 273.00            | 6.74                 |
-| Torch-TensorRT       | GPU     | FP32      | 96.31        | 506.939  | 93.00             | 3.85                 |
-| ONNX                 | GPU     | FP32      | 96.31        | 273.726  | 377.00            | 7.99                 |
-| ONNX-TensorRT        | GPU     | FP32      | 96.31        | 581.654  | 297.00            | 3.80                 |
+<table>
+  <tr>
+    <th>Framework / Compiler</th>
+    <th>Device</th>
+    <th>Precision</th>
+    <th>Accuracy (%)</th>
+    <th>FPS</th>
+    <th>GPU Memory (MiB)</th>
+    <th>GPU Utilization (%)</th>
+  </tr>
+  <tr>
+    <td rowspan="2">PyTorch</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>96.31</td>
+    <td>79.952</td>
+    <td>419.00</td>
+    <td>6.33</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>96.31</td>
+    <td>78.017</td>
+    <td>419.00</td>
+    <td>12.40</td>
+  </tr>
+  <tr>
+    <td rowspan="2">TorchScript</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>96.31</td>
+    <td>143.242</td>
+    <td>261.00</td>
+    <td>7.55</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>96.31</td>
+    <td>113.558</td>
+    <td>263.00</td>
+    <td>13.40</td>
+  </tr>
+  <tr>
+    <td rowspan="2">Torch-TensorRT</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>96.31</td>
+    <td>554.743</td>
+    <td>105.00</td>
+    <td>3.94</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>96.31</td>
+    <td>614.645</td>
+    <td>99.00</td>
+    <td>3.38</td>
+  </tr>
+  <tr>
+    <td rowspan="2">ONNX</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>96.31</td>
+    <td>299.382</td>
+    <td>381.00</td>
+    <td>8.01</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>96.31</td>
+    <td>326.883</td>
+    <td>125.00</td>
+    <td>8.04</td>
+  </tr>
+  <tr>
+    <td rowspan="2">ONNX-TensorRT</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>96.31</td>
+    <td>597.654</td>
+    <td>303.00</td>
+    <td>4.10</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>96.31</td>
+    <td>665.619</td>
+    <td>297.00</td>
+    <td>3.59</td>
+  </tr>
+  <tr>
+    <td rowspan="2">TensorRT</td>
+    <td rowspan="2">GPU</td>
+    <td>FP32</td>
+    <td>96.31</td>
+    <td>571.744</td>
+    <td>85.00</td>
+    <td>4.31</td>
+  </tr>
+  <tr>
+    <td>FP16</td>
+    <td>96.31</td>
+    <td>643.374</td>
+    <td>79.00</td>
+    <td>3.37</td>
+  </tr>
+</table>
 
 ##### Important Note on ONNX Runtime vs. PyTorch:
 
