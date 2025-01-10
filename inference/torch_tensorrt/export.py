@@ -22,22 +22,25 @@ def main(args):
     # Load the model and weights
     model = model_map[args.backbone](num_classes=args.num_classes).cuda()
     model.load_state_dict(torch.load(args.best_model_path))
-    model.eval()
-
-    # Define example input tensor
+    # Apply FP16 precision if specified
+    if args.precision == "fp16":
+        model = model.half()
+    model.eval()    
     example_input = torch.randn(1, 3, 224, 224).cuda()
-
+    scripted_model = torch.jit.script(model)
+    traced_model = torch.jit.trace(scripted_model, example_input)
     # Convert the model to Torch-TensorRT
+    dtype = torch.half if args.precision=='fp16' else torch.float
     trt_model = torch_tensorrt.compile(
-        model,
-        inputs=[torch_tensorrt.Input(example_input.shape)],
-        enabled_precisions={torch.float},  # You can use torch.half or torch.int8 for mixed precision
+        traced_model,
+        inputs=[torch_tensorrt.Input(example_input.shape, dtype=dtype)],
+        enabled_precisions={dtype},  # You can use torch.float, torch.half or torch.int8 for mixed precision
         truncate_long_and_double=True     # Handle non-TensorRT types
     )
 
     # Save the converted model
-    torch.jit.save(trt_model, f"{os.path.dirname(args.best_model_path)}/trt_model.ts")
-    print("Torch-TensorRT model has been saved as 'trt_model.ts'.")
+    torch.jit.save(trt_model, f"{os.path.dirname(args.best_model_path)}/trt_model_{args.precision}.ts")
+    print("Torch-TensorRT model has been saved.")
 
 
 if __name__ == "__main__":
@@ -52,6 +55,8 @@ if __name__ == "__main__":
         "--best_model_path", type=str, default="./weights/resnet18/best_model.pth", 
         help="Path to the saved weights of the best model."
     )
+    parser.add_argument("--precision", type=str, choices=["fp32", "fp16"], default="fp16", 
+        help="Precision for the model.")
     args = parser.parse_args()
 
     # Run the main function

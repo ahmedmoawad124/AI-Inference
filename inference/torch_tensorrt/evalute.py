@@ -9,7 +9,7 @@ from tqdm import tqdm
 import time
 
 
-def preprocess_image(image):
+def preprocess_image(image, precision):
     """
     Preprocess an image for inference.
     
@@ -21,7 +21,8 @@ def preprocess_image(image):
     """
     # Resize the image to the required dimensions
     img = cv2.resize(image, (224, 224), interpolation=cv2.INTER_LINEAR)
-    img = img.astype("float32") / 255.0  # Normalize pixel values to [0, 1]
+    dtype = "float16" if precision=="fp16" else "float32"
+    img = img.astype(dtype) / 255.0  # Normalize pixel values to [0, 1]
     
     # Reorder dimensions to "channels first" and add batch dimension
     img = np.transpose(img, (2, 0, 1))
@@ -53,7 +54,7 @@ def main(args):
     for image_path in tqdm(image_paths, desc="Processing images"):
         # Load and preprocess the image
         image = cv2.imread(image_path)
-        preprocessed_image = preprocess_image(image)
+        preprocessed_image = preprocess_image(image, args.precision)
 
         # Make predictions
         start_time = time.time() # Including data transfers between the CPU and GPU (and vice versa) ensures a fair comparison with ONNX Runtime.
@@ -92,9 +93,11 @@ if __name__ == "__main__":
         help="List of class names in the correct order."
     )
     parser.add_argument(
-        "--trt_model_path", type=str, default="./weights/resnet18/trt_model.ts", 
+        "--trt_model_path", type=str, default="./weights/resnet18/trt_model_fp16.ts", 
         help="Path to the saved weights of the best model."
     )
+    parser.add_argument("--precision", type=str, choices=["fp32", "fp16"], default="fp16", 
+        help="Precision for the model.")
     args = parser.parse_args()
 
     # Run the main function
