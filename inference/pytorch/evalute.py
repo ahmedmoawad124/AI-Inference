@@ -11,7 +11,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 from models.models import VanillaCNN, ResNet18Model, MobileNetV2Model
 
 
-def preprocess_image(image):
+def preprocess_image(image, precision):
     """
     Preprocess an image for inference.
     
@@ -23,7 +23,8 @@ def preprocess_image(image):
     """
     # Resize the image to the required dimensions
     img = cv2.resize(image, (224, 224), interpolation=cv2.INTER_LINEAR)
-    img = img.astype("float32") / 255.0  # Normalize pixel values to [0, 1]
+    dtype = "float16" if precision=="fp16" else "float32"
+    img = img.astype(dtype) / 255.0  # Normalize pixel values to [0, 1]
     
     # Reorder dimensions to "channels first" and add batch dimension
     img = np.transpose(img, (2, 0, 1))
@@ -47,6 +48,7 @@ def main(args):
         torch.cuda.manual_seed(seed)
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
+
     print(f"Using device: {device}")
 
     # Model selection
@@ -64,8 +66,10 @@ def main(args):
     # Load the model and weights
     model = model_map[args.backbone](num_classes=len(args.classes_list)).to(device)
     model.load_state_dict(torch.load(args.best_model_path))
+    if args.precision == "fp16":
+        model.half()
     model.eval()  # Set the model to evaluation mode
-
+        
     # Create a mapping of class names to one-hot vectors
     class_to_one_hot = {
         cls: np.eye(len(args.classes_list))[i] for i, cls in enumerate(args.classes_list)
@@ -79,12 +83,13 @@ def main(args):
     for image_path in tqdm(image_paths, desc="Processing images"):
         # Load and preprocess the image
         image = cv2.imread(image_path)
-        preprocessed_image = preprocess_image(image)
+        preprocessed_image = preprocess_image(image, args.precision)
 
         # Make predictions
         start_time = time.time()  # Including data transfers between the CPU and GPU (and vice versa) ensures a fair comparison with ONNX Runtime.
         input_tensor = torch.from_numpy(preprocessed_image).to(device)
         logits, softmax_out = model(input_tensor)
+        logits = logits.detach().cpu().numpy()
         softmax_out = softmax_out.detach().cpu().numpy()
         infernce_time += (time.time() - start_time)
         predicted_class = softmax_out.argmax()
@@ -122,11 +127,13 @@ if __name__ == "__main__":
         default="resnet18", help="Backbone model to use for inference."
     )
     parser.add_argument(
-        "--device", type=str, choices=["cuda", "cpu"], default="cpu")
+        "--device", type=str, choices=["cuda", "cpu"], default="cuda")
     parser.add_argument(
         "--best_model_path", type=str, default="./weights/resnet18/best_model.pth", 
         help="Path to the saved weights of the best model."
     )
+    parser.add_argument("--precision", type=str, choices=["fp32", "fp16"], default="fp16", 
+        help="Precision for the model.")
     args = parser.parse_args()
 
     # Run the main function

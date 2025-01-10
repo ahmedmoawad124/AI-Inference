@@ -11,7 +11,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 from models.models import VanillaCNN, ResNet18Model, MobileNetV2Model
 
 
-def benchmark_model(model, device, num_warmup_iterations, num_iterations):
+def benchmark_model(model, device, num_warmup_iterations, num_iterations, precision):
     """
     Benchmark an ONNX model on a given provider.
     
@@ -28,7 +28,8 @@ def benchmark_model(model, device, num_warmup_iterations, num_iterations):
     """
 
     # Prepare the input data
-    input_data = np.random.randn(1, 3, 224, 224).astype(np.float32)
+    dtype = np.float16 if precision=='fp16' else np.float32
+    input_data = np.random.randn(1, 3, 224, 224).astype(dtype)
 
     # Warmup the model
     for _ in range(num_warmup_iterations):
@@ -90,23 +91,28 @@ def main():
                 "mobilenet_v2": MobileNetV2Model
             }
     devices = ["cuda", "cpu"]
-
+    precisions = ["fp32", "fp16"]
+    
     # Benchmark models
     for model_name in models_map.keys():
         print(f"Benchmarking {model_name} model:")
         for device in devices:
             print(f"  Benchmarking on {device} device:")
-            model = models_map[model_name](num_classes=2).to(device)
-            model.load_state_dict(torch.load(f"./weights/{model_name}/best_model.pth"))
-            model.eval()  # Set the model to evaluation mode
-            avg_time, average_gpu_mem, average_gpu_util, average_cpu_util = benchmark_model(
-                    model, device, args.num_warmup_iterations, args.num_iterations
-                )
-            print(f"      Average inference time: {avg_time:.2f} ms")
-            print(f"      Average GPU memory used: {average_gpu_mem:.2f} MB")
-            print(f"      Average GPU utilization: {average_gpu_util:.2f} %")
-            print(f"      Average CPU utilization: {average_cpu_util:.2f} %")
-            print(f"      FPS: {1000 / avg_time:.3f}")
+            for precision in precisions:
+                print(f"    Benchmarking for {precision} precision:")
+                model = models_map[model_name](num_classes=2).to(device)
+                model.load_state_dict(torch.load(f"./weights/{model_name}/best_model.pth"))
+                if precision == "fp16":
+                    model.half()
+                model.eval()  # Set the model to evaluation mode
+                avg_time, average_gpu_mem, average_gpu_util, average_cpu_util = benchmark_model(
+                        model, device, args.num_warmup_iterations, args.num_iterations, precision
+                    )
+                print(f"      Average inference time: {avg_time:.2f} ms")
+                print(f"      Average GPU memory used: {average_gpu_mem:.2f} MB")
+                print(f"      Average GPU utilization: {average_gpu_util:.2f} %")
+                print(f"      Average CPU utilization: {average_cpu_util:.2f} %")
+                print(f"      FPS: {1000 / avg_time:.3f}")
 
 if __name__ == "__main__":
     main()
