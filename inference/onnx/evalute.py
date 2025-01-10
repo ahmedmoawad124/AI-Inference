@@ -8,7 +8,7 @@ from tqdm import tqdm
 import time
 
 
-def preprocess_image(image):
+def preprocess_image(image, precision):
     """
     Preprocess an image for inference.
     
@@ -20,7 +20,8 @@ def preprocess_image(image):
     """
     # Resize the image to the required dimensions
     img = cv2.resize(image, (224, 224), interpolation=cv2.INTER_LINEAR)
-    img = img.astype("float32") / 255.0  # Normalize pixel values to [0, 1]
+    dtype = "float16" if precision=="fp16" else "float32"
+    img = img.astype(dtype) / 255.0  # Normalize pixel values to [0, 1]
     
     # Reorder dimensions to "channels first" and add batch dimension
     img = np.transpose(img, (2, 0, 1))
@@ -68,7 +69,7 @@ def main(args):
     for image_path in tqdm(image_paths, desc="Processing images"):
         # Load and preprocess the image
         image = cv2.imread(image_path)
-        preprocessed_image = preprocess_image(image)
+        preprocessed_image = preprocess_image(image, args.precision)
         ort_inputs = {ort_session.get_inputs()[0].name: preprocessed_image}
     
         # Make predictions
@@ -108,9 +109,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "--provider", type=str, choices=["cuda", "cpu", "tensorrt"], default="cuda")
     parser.add_argument(
-        "--onnx_model_path", type=str, default="./weights/resnet18/onnx_model.onnx", 
+        "--onnx_model_path", type=str, default="./weights/resnet18/onnx_model_fp16.onnx", 
         help="Path to the saved onnx model."
     )
+    parser.add_argument("--precision", type=str, choices=["fp32", "fp16"], default="fp16", 
+        help="Precision for the model.")
     args = parser.parse_args()
 
     # Run the main function

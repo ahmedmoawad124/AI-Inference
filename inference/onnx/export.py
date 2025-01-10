@@ -36,18 +36,27 @@ def main(args):
     print('Finished loading model!')
     summary(model, input_size=(3, 224, 224))
 
+    # Apply FP16 precision if specified
+    if args.precision == "fp16":
+        model = model.half()
+        print("Model is converted to FP16 precision.")
+
     # ------------------------ export -----------------------------
-    output_onnx = f"{os.path.dirname(args.best_model_path)}/onnx_model.onnx"
+    precision = 'fp16' if args.precision == "fp16" else 'fp32'
+    output_onnx = f"{os.path.dirname(args.best_model_path)}/onnx_model_{precision}.onnx"
     print("==> Exporting model to ONNX format at '{}'".format(output_onnx))
 
     inputs = torch.randn(1, 3, 224, 224).to(device)
+
+    if args.precision == "fp16":
+        inputs = inputs.half()
 
     # Export the model
     torch.onnx.export(model,                     # model being run
                     inputs,                    # model input (or a tuple for multiple inputs)
                     output_onnx,               # where to save the model (can be a file or file-like object)
                     export_params=True,        # store the trained parameter weights inside the model file
-                    opset_version=12,          # the ONNX version to export the model to
+                    opset_version=20,          # the ONNX version to export the model to
                     do_constant_folding=True,  # whether to execute constant folding for optimization
                     input_names = ['input'],   # the model's input names
                     output_names = ['logits', 'softmax_out'], # the model's output names
@@ -69,6 +78,8 @@ if __name__ == "__main__":
         "--best_model_path", type=str, default="./weights/resnet18/best_model.pth", 
         help="Path to the saved weights of the best model."
     )
+    parser.add_argument("--precision", type=str, choices=["fp32", "fp16"], default="fp16", 
+        help="Precision for the model.")
     args = parser.parse_args()
 
     # Run the main function

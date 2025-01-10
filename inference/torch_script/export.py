@@ -21,14 +21,18 @@ def main(args):
     # Load the model and weights
     model = model_map[args.backbone](num_classes=args.num_classes).cuda()
     model.load_state_dict(torch.load(args.best_model_path))
+    # Apply FP16 precision if specified
+    if args.precision == "fp16":
+        model = model.half()
+        print("Model is converted to FP16 precision.")
     model.eval()
 
     # Convert the model to Torch-Script
     ts_model = torch.jit.script(model)
 
     # Save the converted model
-    torch.jit.save(ts_model, f"{os.path.dirname(args.best_model_path)}/ts_model.ts")
-    print("Torch-Script model has been saved as 'ts_model.ts'.")
+    torch.jit.save(ts_model, f"{os.path.dirname(args.best_model_path)}/ts_model_{args.precision}.ts")
+    print("Torch-Script model has been saved.")
 
 
 if __name__ == "__main__":
@@ -43,6 +47,8 @@ if __name__ == "__main__":
         "--best_model_path", type=str, default="./weights/vanilla_cnn/best_model.pth", 
         help="Path to the saved weights of the best model."
     )
+    parser.add_argument("--precision", type=str, choices=["fp32", "fp16"], default="fp16", 
+        help="Precision for the model.")
     args = parser.parse_args()
 
     # Run the main function

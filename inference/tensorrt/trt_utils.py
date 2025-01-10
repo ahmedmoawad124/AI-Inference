@@ -33,7 +33,8 @@ def export_engine(onnx_file_path, fp16_mode=False, dynamic_batch_size=False):
     device = cuda.Device(0)  # Select the first GPU (device index 0)
     gpu_name = device.name().replace(" ","_")     # GPU name
     compute_capability = device.compute_capability()  # GPU architecture (Compute Capability)
-    engine_file = os.path.join(os.path.dirname(onnx_file_path), f"trt_engine_{gpu_name}_sm{compute_capability[0]}{compute_capability[1]}.engine")
+    precisions = 'fp16' if fp16_mode else 'fp32'
+    engine_file = os.path.join(os.path.dirname(onnx_file_path), f"trt_engine_{precisions}_{gpu_name}_sm{compute_capability[0]}{compute_capability[1]}.engine")
     logger = trt.Logger(trt.Logger.INFO)
 
     # Engine builder

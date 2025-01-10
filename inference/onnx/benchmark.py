@@ -9,7 +9,7 @@ import GPUtil
 import psutil
 
 
-def benchmark_model(model_path, provider, num_warmup_iterations, num_iterations):
+def benchmark_model(model_path, provider, precision, num_warmup_iterations, num_iterations):
     """
     Benchmark an ONNX model on a given provider.
     
@@ -34,15 +34,18 @@ def benchmark_model(model_path, provider, num_warmup_iterations, num_iterations)
     elif provider == "cpu":
         providers = ["CPUExecutionProvider"]
     elif provider == "tensorrt":
+        fp16_mode = True if precision=="fp16" else False
         providers = [("TensorrtExecutionProvider", {"trt_engine_cache_enable": True,  
-                                                    "trt_engine_cache_path": f"{os.path.dirname(model_path)}/trt_cache"
+                                                    "trt_engine_cache_path": f"{os.path.dirname(model_path)}/trt_cache",
+                                                    "trt_fp16_enable": fp16_mode
                                                     }), ("CUDAExecutionProvider", {'cudnn_conv_use_max_workspace':'1', 
                                                                                    'cudnn_conv_algo_search': 'EXHAUSTIVE'})]
     
     ort_session = onnxruntime.InferenceSession(model_path, sess_options=session_options, providers=providers)
 
     # Prepare the input data
-    input_data = np.random.randn(1, 3, 224, 224).astype(np.float32)
+    dtype = np.float16 if precision=='fp16' else np.float32
+    input_data = np.random.randn(1, 3, 224, 224).astype(dtype)
     ort_inputs = {ort_session.get_inputs()[0].name: input_data}
 
     # Warmup the model
@@ -93,21 +96,24 @@ def main():
     # Models and providers to benchmark
     models = ["vanilla_cnn", "resnet18", "mobilenet_v2"]
     providers = ["cuda", "cpu", "tensorrt"]
-
+    precisions = ["fp32", "fp16"]
+    
     # Benchmark models
     for model_name in models:
         print(f"Benchmarking {model_name} model:")
         for provider in providers:
             print(f"  Benchmarking on {provider} provider:")
-            avg_time, average_gpu_mem, average_gpu_util, average_cpu_util = benchmark_model(
-                    f"./weights/{model_name}/onnx_model.onnx", provider, 
-                    args.num_warmup_iterations, args.num_iterations
-                )
-            print(f"      Average inference time: {avg_time:.2f} ms")
-            print(f"      Average GPU memory used: {average_gpu_mem:.2f} MB")
-            print(f"      Average GPU utilization: {average_gpu_util:.2f} %")
-            print(f"      Average CPU utilization: {average_cpu_util:.2f} %")
-            print(f"      FPS: {1000 / avg_time:.3f}")
+            for precision in precisions:
+                print(f"    Benchmarking for {precision} precision:")
+                avg_time, average_gpu_mem, average_gpu_util, average_cpu_util = benchmark_model(
+                        f"./weights/{model_name}/onnx_model_{precision}.onnx", provider, precision,
+                        args.num_warmup_iterations, args.num_iterations
+                    )
+                print(f"      Average inference time: {avg_time:.2f} ms")
+                print(f"      Average GPU memory used: {average_gpu_mem:.2f} MB")
+                print(f"      Average GPU utilization: {average_gpu_util:.2f} %")
+                print(f"      Average CPU utilization: {average_cpu_util:.2f} %")
+                print(f"      FPS: {1000 / avg_time:.3f}")
 
 if __name__ == "__main__":
     main()
