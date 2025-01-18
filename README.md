@@ -156,16 +156,16 @@ The benchmark results were conducted on the following setup:
     <td rowspan="2">GPU</td>
     <td>FP32</td>
     <td>87.5</td>
-    <td>471.896</td>
-    <td>175.00</td>
-    <td>5.08</td>
+    <td>501.207</td>
+    <td>173.00</td>
+    <td>4.35</td>
   </tr>
   <tr>
     <td>FP16</td>
     <td>87.5</td>
-    <td>765.085</td>
-    <td>121.00</td>
-    <td>2.85</td>
+    <td>842.575</td>
+    <td>119.00</td>
+    <td>2.54</td>
   </tr>
 </table>
 
@@ -265,16 +265,16 @@ The benchmark results were conducted on the following setup:
     <td rowspan="2">GPU</td>
     <td>FP32</td>
     <td>95.67</td>
-    <td>377.047</td>
-    <td>131.00</td>
-    <td>6.04</td>
+    <td>394.255</td>
+    <td>129.00</td>
+    <td>6.16</td>
   </tr>
   <tr>
     <td>FP16</td>
     <td>95.67</td>
-    <td>598.237</td>
-    <td>103.00</td>
-    <td>3.39</td>
+    <td>649.792</td>
+    <td>101.00</td>
+    <td>3.67</td>
   </tr>
 </table>
 
@@ -374,16 +374,16 @@ The benchmark results were conducted on the following setup:
     <td rowspan="2">GPU</td>
     <td>FP32</td>
     <td>96.31</td>
-    <td>571.744</td>
-    <td>85.00</td>
-    <td>4.31</td>
+    <td>610.959</td>
+    <td>83.00</td>
+    <td>3.83</td>
   </tr>
   <tr>
     <td>FP16</td>
     <td>96.31</td>
-    <td>643.374</td>
-    <td>79.00</td>
-    <td>3.37</td>
+    <td>686.453</td>
+    <td>77.00</td>
+    <td>3.11</td>
   </tr>
 </table>
 
