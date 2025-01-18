@@ -2,7 +2,6 @@ import argparse
 import os
 import numpy as np
 import cv2
-import torch
 from imutils import paths
 from tqdm import tqdm
 import time
@@ -57,10 +56,9 @@ def main(args):
 
         # Make predictions
         start_time = time.time() # Including data transfers between the CPU and GPU (and vice versa) ensures a fair comparison with ONNX Runtime.
-        input_tensor = torch.from_numpy(preprocessed_image).cuda()
+        input_tensor = preprocessed_image
         output = model(input_tensor)
         logits, softmax_out = output['logits'], output['softmax_out']
-        softmax_out = softmax_out.detach().cpu().numpy()
         infernce_time += (time.time() - start_time)
         predicted_class = softmax_out.argmax()
 

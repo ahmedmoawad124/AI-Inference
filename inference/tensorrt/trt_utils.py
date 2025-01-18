@@ -3,7 +3,6 @@ import collections
 from pathlib import Path
 import logging
 import numpy as np
-import torch
 import tensorrt as trt
 import pycuda.driver as cuda
 import pycuda.autoinit  # Initialize CUDA context
@@ -164,8 +163,10 @@ class TRTInference(object):
                 else:
                     self.output_names.append(name)
                 shape = tuple(self.context.get_binding_shape(i))
-            data = torch.from_numpy(np.empty(shape, dtype=dtype)).cuda()
-            bindings[name] = Binding(name, dtype, shape, data, data.data_ptr())
+            data = np.empty(shape, dtype=dtype)
+            ptr = cuda.mem_alloc(data.nbytes)
+            cuda.memcpy_htod(ptr, data)
+            bindings[name] = Binding(name, dtype, shape, data, ptr)
             
         return bindings
 
@@ -173,8 +174,19 @@ class TRTInference(object):
     def __call__(self, *inputs):
         assert len(inputs) == len(self.input_names), "number of inputs not equal to expected number"
 
-        self.bindings_addr.update({n: inputs[i].contiguous().data_ptr() for i, n in enumerate(self.input_names)})
+        for i, n in enumerate(self.input_names):
+            # Ensure the input data has the correct dtype and is contiguous
+            input_data = np.ascontiguousarray(inputs[i].astype(self.bindings[n].dtype))
+            # Transfer data to GPU
+            cuda.memcpy_htod(self.bindings[n].ptr, input_data)
+
+        # Execute inference
         self.context.execute_v2(list(self.bindings_addr.values()))
-        outputs = {n: self.bindings[n].data for n in self.output_names}
+
+        # Retrieve outputs
+        outputs = {}
+        for n in self.output_names:
+            outputs[n] = np.empty(self.bindings[n].shape, dtype=self.bindings[n].dtype)
+            cuda.memcpy_dtoh(outputs[n], self.bindings[n].ptr)
 
         return outputs

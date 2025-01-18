@@ -1,6 +1,5 @@
 import argparse
 import numpy as np
-import torch
 from tqdm import tqdm
 import time
 import GPUtil
@@ -30,11 +29,7 @@ def benchmark_model(model_path, num_warmup_iterations, num_iterations, precision
 
     # Warmup the model
     for _ in range(num_warmup_iterations):
-        input_tensor = torch.from_numpy(input_data).cuda()
-        output = model(input_tensor)
-        logits, softmax_out = output['logits'], output['softmax_out']
-        logits = logits.detach().cpu().numpy()
-        softmax_out = softmax_out.detach().cpu().numpy()
+        output = model(input_data)
 
     # Measure performance
     inference_times = []
@@ -49,13 +44,10 @@ def benchmark_model(model_path, num_warmup_iterations, num_iterations, precision
         gpu_utilization_list.append(gpu_utilization)
 
         # Perform inference
-        start_time = time.time() # Including data transfers between the CPU and GPU (and vice versa) ensures a fair comparison with ONNX Runtime.
+        start_time = time.time()
         
-        input_tensor = torch.from_numpy(input_data).cuda()
-        output = model(input_tensor)
+        output = model(input_data)
         logits, softmax_out = output['logits'], output['softmax_out']
-        logits = logits.detach().cpu().numpy()
-        softmax_out = softmax_out.detach().cpu().numpy()
         
         inference_time = (time.time() - start_time) * 1000  # Convert to milliseconds
         inference_times.append(inference_time)
